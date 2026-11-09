@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090e27">
+  <meta name="description" content="Una home cinematografica per il browser della tua TV.">
+  <title>Vista — La tua TV, a modo tuo</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <main class="home">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">v</span> vista<span class="brand-dot">.</span></div>
+      <div class="location">IL TUO SPAZIO, SUL GRANDE SCHERMO</div>
+      <div class="clock"><time id="clock">--:--</time><div id="date">Benvenuto</div></div>
+    </header>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="eyebrow"><span class="live-dot"></span> LA SERATA È TUA</div>
+      <h1 id="hero-title">Un mondo di storie.<br><span>Il tuo posto in prima fila.</span></h1>
+      <p>Ritrova ciò che ami. Scopri qualcosa di nuovo.<br>Tutto comincia da qui.</p>
+      <div class="hero-detail"><span class="detail-line"></span> Siediti. Scegli. Lasciati trasportare.</div>
+      <div class="orbital" aria-hidden="true"><div class="planet"></div><div class="orbit"></div><div class="star star-one"></div><div class="star star-two"></div></div>
+    </section>
+    <section class="apps" aria-labelledby="apps-title">
+      <div class="section-heading"><h2 id="apps-title">Le tue app</h2><span>IL MEGLIO DELL’INTRATTENIMENTO</span></div>
+      <div class="app-row" id="app-row">
+        <a class="app netflix" data-app="netflix" href="https://www.netflix.com/" aria-label="Apri il sito Netflix"><span class="tile"><span class="netflix-logo">NETFLIX</span></span><span class="app-name">Netflix</span><span class="app-kind">Film e serie TV</span></a>
+        <a class="app youtube" data-app="youtube" href="https://www.youtube.com/" aria-label="Apri il sito YouTube"><span class="tile"><span class="youtube-logo"><span class="play-icon"></span></span><span class="youtube-word">YouTube</span></span><span class="app-name">YouTube</span><span class="app-kind">Video e musica</span></a>
+        <a class="app prime" data-app="prime" href="https://www.primevideo.com/" aria-label="Apri il sito Prime Video"><span class="tile"><span class="prime-logo">prime video<span class="prime-smile"></span></span></span><span class="app-name">Prime Video</span><span class="app-kind">Film e serie originali</span></a>
+        <a class="app rakuten" data-app="rakuten" href="https://www.rakuten.tv/" aria-label="Apri il sito Rakuten TV"><span class="tile"><span class="rakuten-logo">Rakuten<span class="rakuten-tv">TV</span></span></span><span class="app-name">Rakuten TV</span><span class="app-kind">Cinema da scoprire</span></a>
+      </div>
+    </section>
+    <footer><div class="remote-hint"><span class="key">←</span><span class="key">→</span> Esplora <span class="key key-ok">OK</span> Apri</div><div class="footer-note">LA TUA HOME <span>•</span> IL TUO INTRATTENIMENTO</div><span class="browser-badge">WEB HOME</span></footer>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <noscript><p class="status">Attiva JavaScript per orologio e telecomando. I collegamenti sono disponibili con il cursore.</p></noscript>
+  </main>
+</body>
+</html>
