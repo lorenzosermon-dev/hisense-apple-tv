@@ -18,8 +18,42 @@ var APP_LINKS = {
   var settingsClose = document.getElementById('settings-close');
   var results = document.getElementById('diagnostics-results');
   var summary = document.getElementById('diagnostics-summary');
+  var scaleControl = document.getElementById('display-scale');
+  var scaleValue = document.getElementById('scale-value');
+  var displayScale = 100;
+  var scaleStorageKey = 'vista.displayScale';
+  function applyLayout() {
+    var root = document.documentElement;
+    var width = root.clientWidth || window.innerWidth;
+    var height = root.clientHeight || window.innerHeight;
+    // 100 x 56.25 units preserve the 16:9 composition at any viewport size.
+    // Both dimensions reserve 5% at each edge before the manual reduction.
+    if (width > 0 && height > 0) {
+      root.style.fontSize = (Math.min(width * 0.9 / 100, height * 0.9 / 56.25) * displayScale / 100) + 'px';
+    }
+    scaleControl.value = displayScale;
+    scaleControl.setAttribute('aria-valuetext', displayScale + '%');
+    scaleValue.textContent = displayScale + '%';
+  }
+  function setScale(value, save) {
+    value = Number(value);
+    displayScale = isFinite(value) ? Math.max(70, Math.min(100, Math.round(value))) : 100;
+    applyLayout();
+    if (save) {
+      try { window.localStorage.setItem(scaleStorageKey, String(displayScale)); } catch (error) { /* Session-only when storage is unavailable. */ }
+    }
+  }
+  try {
+    var savedScale = window.localStorage.getItem(scaleStorageKey);
+    if (savedScale !== null && savedScale !== '') { setScale(savedScale, false); }
+  } catch (error) { /* Storage may be blocked on the TV. */ }
+  applyLayout();
+  window.addEventListener('resize', applyLayout, false);
+  window.addEventListener('orientationchange', applyLayout, false);
+  scaleControl.addEventListener('input', function () { setScale(scaleControl.value, true); }, false);
+  scaleControl.addEventListener('change', function () { setScale(scaleControl.value, true); }, false);
   var panelOpen = false;
-  var panelButtons = [diagnosticsRun, settingsClose];
+  var panelButtons = [diagnosticsRun, scaleControl, settingsClose];
   var panelSelected = 0;
 
   function openSettings() {
@@ -106,7 +140,8 @@ var APP_LINKS = {
   settingsClose.addEventListener('click', closeSettings, false);
   diagnosticsRun.addEventListener('click', runDiagnostics, false);
   diagnosticsRun.addEventListener('focus', function () { panelSelected = 0; }, false);
-  settingsClose.addEventListener('focus', function () { panelSelected = 1; }, false);
+  scaleControl.addEventListener('focus', function () { panelSelected = 1; }, false);
+  settingsClose.addEventListener('focus', function () { panelSelected = 2; }, false);
   var status = document.getElementById('status');
   var days = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
   var months = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
@@ -156,9 +191,15 @@ var APP_LINKS = {
       if (key === 'Escape' || key === 'Backspace' || key === 'GoBack' || code === 27 || code === 8 || code === 461 || code === 10009) {
         event.preventDefault(); closeSettings();
       } else if (code === 9 || key === 'Tab' || key === 'ArrowUp' || key === 'ArrowDown' || code === 38 || code === 40) {
-        event.preventDefault(); panelSelected = 1 - panelSelected; panelButtons[panelSelected].focus();
+        event.preventDefault();
+        var direction = (key === 'ArrowUp' || code === 38 || ((key === 'Tab' || code === 9) && event.shiftKey)) ? -1 : 1;
+        panelSelected = (panelSelected + direction + panelButtons.length) % panelButtons.length;
+        panelButtons[panelSelected].focus();
       } else if (key === 'ArrowLeft' || key === 'ArrowRight' || code === 37 || code === 39) {
-        event.preventDefault(); results.scrollTop += (key === 'ArrowLeft' || code === 37) ? -160 : 160;
+        event.preventDefault();
+        var step = (key === 'ArrowLeft' || code === 37) ? -1 : 1;
+        if (panelButtons[panelSelected] === scaleControl) { setScale(displayScale + step, true); }
+        else { results.scrollTop += step * results.clientHeight * 0.5; }
       } else if (isOK) {
         event.preventDefault();
         if (!event.repeat) { panelButtons[panelSelected].click(); }
@@ -183,7 +224,7 @@ var APP_LINKS = {
       if (!event.repeat && activate(null, apps[selected])) { window.location.href = apps[selected].getAttribute('href'); }
     }
   }, false);
-  window.addEventListener('pageshow', function () { updateClock(); if (!panelOpen) { select(selected); } }, false);
+  window.addEventListener('pageshow', function () { applyLayout(); updateClock(); if (!panelOpen) { select(selected); } }, false);
   updateClock();
   window.setInterval(updateClock, 1000);
   select(0);

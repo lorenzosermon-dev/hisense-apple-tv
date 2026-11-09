@@ -45,4 +45,11 @@ Premi ↑ dalla riga delle app per raggiungere **Impostazioni**, poi OK. Il puls
 
 La verifica usa descrittori di proprietà, senza invocare funzioni native né getter. Una proprietà accessore, protetta o non ispezionabile viene indicata come non verificabile. La presenza di una funzione non prova che sia utilizzabile o autorizzata. Gli ulteriori nomi scoperti non vengono dichiarati API documentate. Non vengono caricati SDK, salvati risultati o effettuate richieste di rete dalla diagnostica.
 
-Nel pannello: ↑/↓ selezionano i due pulsanti, ←/→ scorrono i risultati, OK conferma, Indietro/Esc chiude. Chiudendo torni a Impostazioni; ↓ riporta all'app selezionata. I risultati restano soltanto in memoria fino al ricaricamento. Il pannello può essere rimosso insieme al relativo blocco CSS e alle funzioni diagnostiche in `script.js` al termine dei test.
+Nel pannello: ↑/↓ selezionano i controlli, ←/→ regolano la scala quando selezionata o scorrono i risultati sugli altri controlli, OK conferma, Indietro/Esc chiude. Chiudendo torni a Impostazioni; ↓ riporta all'app selezionata. I risultati restano soltanto in memoria fino al ricaricamento. Il pannello può essere rimosso insieme al relativo blocco CSS e alle funzioni diagnostiche in `script.js` al termine dei test.
+
+
+## Area sicura e scala
+
+La Home e il pannello impostazioni vengono centrati nell'area sicura del browser: il 5% di larghezza e altezza rimane libero su ciascun bordo. Il rapporto della composizione resta 16:9 e il calcolo considera sia la larghezza sia l'altezza effettive, anche a 1366×768 o 1280×720. Il ridimensionamento si aggiorna all'avvio, al ritorno alla pagina e quando cambia il viewport.
+
+In **Impostazioni**, seleziona **Scala Home** con ↑/↓ e regola con ←/→ da 70% a 100%, un punto percentuale per pressione. Il controllo funziona anche con mouse o touch. La scala agisce anche sul pannello impostazioni, mantenendolo dentro l'area sicura. La scelta viene salvata nella chiave `vista.displayScale` di localStorage; se l'archiviazione manca o è bloccata, rimane valida per la sessione. Il valore iniziale è 100% dell'area sicura, non dell'intero schermo.

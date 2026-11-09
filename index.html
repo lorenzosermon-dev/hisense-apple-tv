@@ -42,13 +42,18 @@
     <section class="settings-card">
       <h2 id="settings-title">Impostazioni</h2>
       <p>Diagnostica temporanea: controlla la presenza delle API, senza eseguirle.</p>
+      <div class="scale-setting">
+        <label for="display-scale">Scala Home: <span id="scale-value">100%</span></label>
+        <input id="display-scale" type="range" min="70" max="100" step="1" value="100" aria-describedby="scale-help">
+        <span id="scale-help">← → Regola tra 70% e 100%</span>
+      </div>
       <div class="settings-actions">
         <button id="diagnostics-run" class="settings-button" type="button">Diagnostica VIDAA</button>
         <button id="settings-close" class="settings-button" type="button">Chiudi</button>
       </div>
       <p id="diagnostics-summary" role="status" aria-live="polite">Nessuna verifica eseguita.</p>
       <div id="diagnostics-results" class="diagnostics-results" role="region" aria-label="Risultati diagnostica"></div>
-      <p class="diagnostics-help">↑ ↓ Seleziona pulsante · ← → Scorri risultati · OK Conferma · Indietro/Esc Chiudi</p>
+      <p class="diagnostics-help">↑ ↓ Seleziona controllo · ← → Scala / scorri risultati · OK Conferma · Indietro/Esc Chiudi</p>
       <p class="diagnostics-help">Disponibile indica solo un valore di tipo funzione, non il permesso o la possibilità di usarlo. Gli accessori non vengono letti.</p>
     </section>
   </div>
