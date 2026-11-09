@@ -12,6 +12,101 @@ var APP_LINKS = {
   'use strict';
   var apps = document.querySelectorAll('[data-app]');
   var selected = 0;
+  var settingsOpen = document.getElementById('settings-open');
+  var settingsPanel = document.getElementById('settings-panel');
+  var diagnosticsRun = document.getElementById('diagnostics-run');
+  var settingsClose = document.getElementById('settings-close');
+  var results = document.getElementById('diagnostics-results');
+  var summary = document.getElementById('diagnostics-summary');
+  var panelOpen = false;
+  var panelButtons = [diagnosticsRun, settingsClose];
+  var panelSelected = 0;
+
+  function openSettings() {
+    panelOpen = true;
+    settingsPanel.style.display = 'block';
+    settingsPanel.setAttribute('aria-hidden', 'false');
+    panelSelected = 0;
+    diagnosticsRun.focus();
+  }
+  function closeSettings() {
+    panelOpen = false;
+    settingsPanel.style.display = 'none';
+    settingsPanel.setAttribute('aria-hidden', 'true');
+    settingsOpen.focus();
+  }
+  // Inspect descriptors only: reading window[name] could invoke a native getter.
+  function inspectNative(name) {
+    var owner = window;
+    var descriptor;
+    var depth = 0;
+    if (typeof Object.getOwnPropertyDescriptor !== 'function' ||
+        typeof Object.getPrototypeOf !== 'function') {
+      return 'Non verificabile: introspezione non supportata';
+    }
+    try {
+      while (owner && depth < 20) {
+        descriptor = Object.getOwnPropertyDescriptor(owner, name);
+        if (descriptor) {
+          if (!Object.prototype.hasOwnProperty.call(descriptor, 'value')) {
+            return 'Non verificabile: accessore non eseguito';
+          }
+          return typeof descriptor.value === 'function' ?
+            'Disponibile (funzione rilevata, non eseguita)' : 'Non disponibile (non è una funzione)';
+        }
+        owner = Object.getPrototypeOf(owner);
+        depth += 1;
+      }
+      return owner ? 'Non verificabile: limite di introspezione' : 'Non disponibile';
+    } catch (error) {
+      return 'Non verificabile: proprietà protetta';
+    }
+  }
+  function runDiagnostics() {
+    var names = ['Hisense_installApp', 'Hisense_GetModelName', 'Hisense_GetFirmWareVersion'];
+    var discovered;
+    var name;
+    var row;
+    var label;
+    var state;
+    var j;
+    var discoveryNote = '';
+    // Additional globals are discovered by name, not presented as documented APIs.
+    // No recursive traversal of native namespaces and no native function calls.
+    try {
+      if (typeof Object.getOwnPropertyNames === 'function') {
+        discovered = Object.getOwnPropertyNames(window);
+        for (j = 0; j < discovered.length; j += 1) {
+          name = discovered[j];
+          if (/^(Hisense|VIDAA)(_|[A-Z])/i.test(name) && names.indexOf(name) === -1) {
+            names.push(name);
+          }
+        }
+      } else { discoveryNote = ' Ricerca di ulteriori nomi non supportata.'; }
+    } catch (error) { discoveryNote = ' Ricerca di ulteriori nomi non consentita.'; }
+    while (results.firstChild) { results.removeChild(results.firstChild); }
+    for (j = 0; j < names.length; j += 1) {
+      row = document.createElement('div');
+      row.className = 'diagnostic-row';
+      label = document.createElement('div');
+      label.className = 'diagnostic-name';
+      label.textContent = names[j];
+      state = document.createElement('div');
+      state.className = 'diagnostic-state';
+      state.textContent = inspectNative(names[j]);
+      row.appendChild(label);
+      row.appendChild(state);
+      results.appendChild(row);
+    }
+    results.scrollTop = 0;
+    summary.textContent = names.length + ' nomi controllati. Nessuna API nativa eseguita.' +
+      ' Gli ulteriori nomi Hisense/VIDAA sono rilevati sul dispositivo, senza certificazione della loro documentazione.' + discoveryNote;
+  }
+  settingsOpen.addEventListener('click', openSettings, false);
+  settingsClose.addEventListener('click', closeSettings, false);
+  diagnosticsRun.addEventListener('click', runDiagnostics, false);
+  diagnosticsRun.addEventListener('focus', function () { panelSelected = 0; }, false);
+  settingsClose.addEventListener('focus', function () { panelSelected = 1; }, false);
   var status = document.getElementById('status');
   var days = ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'];
   var months = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
@@ -56,6 +151,29 @@ var APP_LINKS = {
   document.addEventListener('keydown', function (event) {
     var code = event.keyCode || event.which;
     var key = event.key;
+    var isOK = key === 'Enter' || key === 'OK' || code === 13;
+    if (panelOpen) {
+      if (key === 'Escape' || key === 'Backspace' || key === 'GoBack' || code === 27 || code === 8 || code === 461 || code === 10009) {
+        event.preventDefault(); closeSettings();
+      } else if (code === 9 || key === 'Tab' || key === 'ArrowUp' || key === 'ArrowDown' || code === 38 || code === 40) {
+        event.preventDefault(); panelSelected = 1 - panelSelected; panelButtons[panelSelected].focus();
+      } else if (key === 'ArrowLeft' || key === 'ArrowRight' || code === 37 || code === 39) {
+        event.preventDefault(); results.scrollTop += (key === 'ArrowLeft' || code === 37) ? -160 : 160;
+      } else if (isOK) {
+        event.preventDefault();
+        if (!event.repeat) { panelButtons[panelSelected].click(); }
+      }
+      return;
+    }
+    if (document.activeElement === settingsOpen) {
+      if (isOK) { event.preventDefault(); if (!event.repeat) { openSettings(); } }
+      else if (key === 'ArrowDown' || code === 40) { event.preventDefault(); select(selected); }
+      else if (code >= 37 && code <= 39) { event.preventDefault(); }
+      return;
+    }
+    if (key === 'ArrowUp' || code === 38) {
+      event.preventDefault(); settingsOpen.focus(); return;
+    }
     if (key === 'ArrowLeft' || code === 37) { event.preventDefault(); select(selected - 1); }
     else if (key === 'ArrowRight' || code === 39) { event.preventDefault(); select(selected + 1); }
     else if (key === 'ArrowUp' || key === 'ArrowDown' || code === 38 || code === 40) {
@@ -65,7 +183,7 @@ var APP_LINKS = {
       if (!event.repeat && activate(null, apps[selected])) { window.location.href = apps[selected].getAttribute('href'); }
     }
   }, false);
-  window.addEventListener('pageshow', function () { updateClock(); select(selected); }, false);
+  window.addEventListener('pageshow', function () { updateClock(); if (!panelOpen) { select(selected); } }, false);
   updateClock();
   window.setInterval(updateClock, 1000);
   select(0);

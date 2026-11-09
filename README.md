@@ -38,3 +38,11 @@ Verifica sulla TV:
 - messaggio con un collegamento impostato a stringa vuota.
 
 Non sono necessarie modifiche al firmware o al launcher originale.
+
+## Diagnostica VIDAA temporanea
+
+Premi ↑ dalla riga delle app per raggiungere **Impostazioni**, poi OK. Il pulsante **Diagnostica VIDAA** controlla i tre nomi `Hisense_installApp`, `Hisense_GetModelName` e `Hisense_GetFirmWareVersion`, oltre agli ulteriori nomi globali con prefisso Hisense/VIDAA presenti sul dispositivo. Non viene eseguito alcun controllo all'avvio.
+
+La verifica usa descrittori di proprietà, senza invocare funzioni native né getter. Una proprietà accessore, protetta o non ispezionabile viene indicata come non verificabile. La presenza di una funzione non prova che sia utilizzabile o autorizzata. Gli ulteriori nomi scoperti non vengono dichiarati API documentate. Non vengono caricati SDK, salvati risultati o effettuate richieste di rete dalla diagnostica.
+
+Nel pannello: ↑/↓ selezionano i due pulsanti, ←/→ scorrono i risultati, OK conferma, Indietro/Esc chiude. Chiudendo torni a Impostazioni; ↓ riporta all'app selezionata. I risultati restano soltanto in memoria fino al ricaricamento. Il pannello può essere rimosso insieme al relativo blocco CSS e alle funzioni diagnostiche in `script.js` al termine dei test.

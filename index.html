@@ -34,9 +34,23 @@
         <a class="app rakuten" data-app="rakuten" href="https://www.rakuten.tv/" aria-label="Apri il sito Rakuten TV"><span class="tile"><span class="rakuten-logo">Rakuten<span class="rakuten-tv">TV</span></span></span><span class="app-name">Rakuten TV</span><span class="app-kind">Cinema da scoprire</span></a>
       </div>
     </section>
-    <footer><div class="remote-hint"><span class="key">←</span><span class="key">→</span> Esplora <span class="key key-ok">OK</span> Apri</div><div class="footer-note">LA TUA HOME <span>•</span> IL TUO INTRATTENIMENTO</div><span class="browser-badge">WEB HOME</span></footer>
+    <footer><div class="remote-hint"><span class="key">←</span><span class="key">→</span> Esplora <span class="key key-ok">OK</span> Apri</div><div class="footer-note">LA TUA HOME <span>•</span> IL TUO INTRATTENIMENTO</div><button id="settings-open" class="browser-badge settings-button" type="button" aria-haspopup="dialog" aria-controls="settings-panel">Impostazioni</button></footer>
     <p id="status" class="status" role="status" aria-live="polite"></p>
     <noscript><p class="status">Attiva JavaScript per orologio e telecomando. I collegamenti sono disponibili con il cursore.</p></noscript>
   </main>
+  <div id="settings-panel" class="settings-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-hidden="true">
+    <section class="settings-card">
+      <h2 id="settings-title">Impostazioni</h2>
+      <p>Diagnostica temporanea: controlla la presenza delle API, senza eseguirle.</p>
+      <div class="settings-actions">
+        <button id="diagnostics-run" class="settings-button" type="button">Diagnostica VIDAA</button>
+        <button id="settings-close" class="settings-button" type="button">Chiudi</button>
+      </div>
+      <p id="diagnostics-summary" role="status" aria-live="polite">Nessuna verifica eseguita.</p>
+      <div id="diagnostics-results" class="diagnostics-results" role="region" aria-label="Risultati diagnostica"></div>
+      <p class="diagnostics-help">↑ ↓ Seleziona pulsante · ← → Scorri risultati · OK Conferma · Indietro/Esc Chiudi</p>
+      <p class="diagnostics-help">Disponibile indica solo un valore di tipo funzione, non il permesso o la possibilità di usarlo. Gli accessori non vengono letti.</p>
+    </section>
+  </div>
 </body>
 </html>

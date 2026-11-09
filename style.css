@@ -58,3 +58,18 @@ footer { border-top: 1px solid rgba(147,161,196,.12); margin-top: 3.2vw; padding
 .status { color: #d0c5f4; font-size: 14px; min-height: 1em; }
 @media (prefers-reduced-motion: reduce) { .tile { transition: none; } }
 @media (max-aspect-ratio: 4/3) { .home { padding-top: 6vw; } .hero { height: 39vw; padding-top: 7vw; } .location { display: none; } .app-name { font-size: 1.8vw; } .app-kind { font-size: 1.3vw; } footer { font-size: 1.3vw; } }
+
+/* Pannello diagnostico temporaneo, indipendente dal layout della Home. */
+.settings-button { background: #202943; color: #f7f8ff; border: 2px solid #687593; border-radius: .5em; padding: .55em 1em; font: inherit; cursor: pointer; }
+.settings-button:focus { outline: 3px solid #dacbff; outline-offset: 3px; }
+button.browser-badge { top: 1.25vw; font-size: .8vw; letter-spacing: .04vw; }
+.settings-overlay { position: fixed; z-index: 10; top: 0; right: 0; bottom: 0; left: 0; background: rgba(5, 9, 25, .96); padding: 4vh 7vw; overflow: auto; }
+.settings-card { max-width: 1200px; margin: 0 auto; font-size: 1.4vw; }
+.settings-card h2 { font-size: 2.2vw; }
+.settings-card p { line-height: 1.5; color: #bfc7dd; }
+.settings-actions button { margin-right: 1em; }
+.diagnostics-results { height: 43vh; overflow-y: auto; border: 1px solid #56617e; padding: .5em 1em; background: #10172b; }
+.diagnostic-row { padding: .55em 0; border-bottom: 1px solid #303b56; overflow-wrap: break-word; word-wrap: break-word; }
+.diagnostic-name { font-family: monospace; }
+.diagnostic-state { display: block; color: #c6d4f0; font-size: .9em; margin-top: .2em; }
+.settings-card .diagnostics-help { font-size: 1.1vw; }
