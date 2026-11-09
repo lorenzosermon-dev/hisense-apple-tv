@@ -101,3 +101,24 @@ button.browser-badge { top: .6rem; }
 .diagnostics-results { position: absolute; top: 22rem; bottom: 8rem; left: 3rem; right: 3rem; height: auto; }
 .settings-card .diagnostics-help { position: absolute; bottom: 5rem; font-size: 1.1rem; }
 .settings-card .diagnostics-help:last-child { bottom: 1rem; }
+
+/* Five complete results per page; the existing safe-area scale also applies here. */
+.settings-view > p { position: absolute; top: 4rem; left: 3rem; right: 3rem; margin: 0; }
+.settings-view > .diagnostics-help { top: auto; bottom: 5rem; }
+#diagnostics-view > p { margin: 0; left: 3rem; right: 3rem; }
+#diagnostics-summary { top: 4.5rem; height: 4.5rem; overflow: visible; }
+.diagnostics-filter { position: absolute; top: 10rem; left: 3rem; }
+.diagnostics-results { top: 15rem; bottom: 11rem; overflow: hidden; padding: 0 1rem; }
+.diagnostic-row { height: 20%; padding: .4rem 0; font-size: 1.2rem; line-height: 1.3; }
+.diagnostic-name { font-size: 1.3rem; }
+.diagnostic-state { font-size: 1.1rem; line-height: 1.3; }
+.api-available, .api-available .diagnostic-state { color: #80e5a3; }
+.api-unavailable, .api-unavailable .diagnostic-state { color: #a7aab4; }
+.api-unknown, .api-unknown .diagnostic-state { color: #dfc58e; }
+.diagnostics-pagination { position: absolute; bottom: 6rem; left: 3rem; right: 3rem; white-space: nowrap; font-size: 1.2rem; }
+.diagnostics-pagination button { margin-right: 1rem; }
+#diagnostics-page { display: inline-block; min-width: 13rem; text-align: center; margin-right: 1rem; }
+.diagnostics-pagination [aria-disabled="true"] { color: #a7aab4; border-color: #4b556a; }
+#diagnostics-view .diagnostics-help { bottom: 3.5rem; }
+#diagnostics-view .diagnostics-help:last-child { bottom: 1rem; }
+.diagnostics-empty { font-size: 1.3rem; }

@@ -41,6 +41,7 @@
   <div id="settings-panel" class="settings-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="settings-title" aria-hidden="true">
     <section class="settings-card">
       <h2 id="settings-title">Impostazioni</h2>
+      <div id="settings-view" class="settings-view">
       <p>Diagnostica temporanea: controlla la presenza delle API, senza eseguirle.</p>
       <div class="scale-setting">
         <label for="display-scale">Scala Home: <span id="scale-value">100%</span></label>
@@ -51,10 +52,21 @@
         <button id="diagnostics-run" class="settings-button" type="button">Diagnostica VIDAA</button>
         <button id="settings-close" class="settings-button" type="button">Chiudi</button>
       </div>
-      <p id="diagnostics-summary" role="status" aria-live="polite">Nessuna verifica eseguita.</p>
-      <div id="diagnostics-results" class="diagnostics-results" role="region" aria-label="Risultati diagnostica"></div>
-      <p class="diagnostics-help">↑ ↓ Seleziona controllo · ← → Scala / scorri risultati · OK Conferma · Indietro/Esc Chiudi</p>
-      <p class="diagnostics-help">Disponibile indica solo un valore di tipo funzione, non il permesso o la possibilità di usarlo. Gli accessori non vengono letti.</p>
+      <p class="diagnostics-help">↑ ↓ Seleziona controllo · ← → Regola scala · OK Conferma · Indietro/Esc Chiudi</p>
+      </div>
+      <div id="diagnostics-view" style="display:none" aria-hidden="true">
+        <p id="diagnostics-summary" role="status" aria-live="polite">Nessuna verifica eseguita.</p>
+        <button id="diagnostics-filter" class="settings-button diagnostics-filter" type="button" aria-pressed="false">Solo API disponibili: No</button>
+        <div id="diagnostics-results" class="diagnostics-results" role="region" aria-label="Risultati diagnostica"></div>
+        <div class="diagnostics-pagination">
+          <button id="diagnostics-prev" class="settings-button" type="button">◀ Precedente</button>
+          <span id="diagnostics-page" role="status" aria-live="polite">Pagina 1 di 1</span>
+          <button id="diagnostics-next" class="settings-button" type="button">Successiva ▶</button>
+          <button id="diagnostics-back" class="settings-button" type="button">Impostazioni</button>
+        </div>
+        <p class="diagnostics-help">← → Cambia pagina · ↑ ↓ Seleziona controllo · OK Conferma · Indietro/Esc Impostazioni</p>
+        <p class="diagnostics-help">Disponibile indica solo una funzione rilevata, non il permesso di usarla. Gli accessori non vengono letti.</p>
+      </div>
     </section>
   </div>
 </body>

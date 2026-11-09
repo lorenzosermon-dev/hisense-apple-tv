@@ -45,7 +45,7 @@ Premi ↑ dalla riga delle app per raggiungere **Impostazioni**, poi OK. Il puls
 
 La verifica usa descrittori di proprietà, senza invocare funzioni native né getter. Una proprietà accessore, protetta o non ispezionabile viene indicata come non verificabile. La presenza di una funzione non prova che sia utilizzabile o autorizzata. Gli ulteriori nomi scoperti non vengono dichiarati API documentate. Non vengono caricati SDK, salvati risultati o effettuate richieste di rete dalla diagnostica.
 
-Nel pannello: ↑/↓ selezionano i controlli, ←/→ regolano la scala quando selezionata o scorrono i risultati sugli altri controlli, OK conferma, Indietro/Esc chiude. Chiudendo torni a Impostazioni; ↓ riporta all'app selezionata. I risultati restano soltanto in memoria fino al ricaricamento. Il pannello può essere rimosso insieme al relativo blocco CSS e alle funzioni diagnostiche in `script.js` al termine dei test.
+Nel pannello: ↑/↓ selezionano i controlli e OK conferma. Nelle impostazioni ←/→ regolano la scala; nella diagnostica cambiano pagina. Indietro/Esc torna dalla diagnostica alle impostazioni e dalle impostazioni alla Home. Chiudendo torni a Impostazioni; ↓ riporta all'app selezionata. I risultati restano soltanto in memoria fino al ricaricamento. Il pannello può essere rimosso insieme al relativo blocco CSS e alle funzioni diagnostiche in `script.js` al termine dei test.
 
 
 ## Area sicura e scala
@@ -53,3 +53,12 @@ Nel pannello: ↑/↓ selezionano i controlli, ←/→ regolano la scala quando 
 La Home e il pannello impostazioni vengono centrati nell'area sicura del browser: il 5% di larghezza e altezza rimane libero su ciascun bordo. Il rapporto della composizione resta 16:9 e il calcolo considera sia la larghezza sia l'altezza effettive, anche a 1366×768 o 1280×720. Il ridimensionamento si aggiorna all'avvio, al ritorno alla pagina e quando cambia il viewport.
 
 In **Impostazioni**, seleziona **Scala Home** con ↑/↓ e regola con ←/→ da 70% a 100%, un punto percentuale per pressione. Il controllo funziona anche con mouse o touch. La scala agisce anche sul pannello impostazioni, mantenendolo dentro l'area sicura. La scelta viene salvata nella chiave `vista.displayScale` di localStorage; se l'archiviazione manca o è bloccata, rimane valida per la sessione. Il valore iniziale è 100% dell'area sicura, non dell'intero schermo.
+
+
+## Diagnostica con paginazione
+
+La diagnostica mostra al massimo cinque API per pagina, senza elenco da scorrere. Tutti i risultati originali restano in memoria; con 64 nomi si ottengono 13 pagine. I pulsanti **◀ Precedente** e **Successiva ▶**, oppure le frecce ←/→, cambiano pagina senza superare la prima o l'ultima. L'indicatore mostra **Pagina X di Y**.
+
+Con ↑/↓ selezioni filtro, pulsanti pagina e ritorno alle impostazioni; OK attiva il controllo. **Solo API disponibili** filtra i risultati già raccolti, senza ripetere la diagnostica. Disattivandolo ritrovi tutti i nomi, inclusi quelli non verificabili. Le API disponibili sono verdi, quelle non disponibili grigie e quelle non verificabili color ambra, sempre accompagnate da una descrizione testuale. Se il filtro non trova funzioni, compare un messaggio e l'indicatore resta Pagina 1 di 1.
+
+Il tasto Indietro (anche codici 461/10009), Esc o il pulsante **Impostazioni** riporta alle impostazioni. I controlli e le cinque righe occupano l'area sicura già prevista, anche a 1280×720. Nessuna API nativa viene invocata.

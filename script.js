@@ -18,6 +18,22 @@ var APP_LINKS = {
   var settingsClose = document.getElementById('settings-close');
   var results = document.getElementById('diagnostics-results');
   var summary = document.getElementById('diagnostics-summary');
+  var settingsView = document.getElementById('settings-view');
+  var diagnosticsView = document.getElementById('diagnostics-view');
+  var settingsTitle = document.getElementById('settings-title');
+  var filterButton = document.getElementById('diagnostics-filter');
+  var previousButton = document.getElementById('diagnostics-prev');
+  var nextButton = document.getElementById('diagnostics-next');
+  var backButton = document.getElementById('diagnostics-back');
+  var pageIndicator = document.getElementById('diagnostics-page');
+  var diagnosticButtons = [filterButton, previousButton, nextButton, backButton];
+  var diagnosticSelected = 0;
+  var diagnosticOpen = false;
+  var diagnosticRecords = [];
+  var availableOnly = false;
+  var diagnosticPage = 0;
+  var pageSize = 5;
+  var pageCount = 1;
   var scaleControl = document.getElementById('display-scale');
   var scaleValue = document.getElementById('scale-value');
   var displayScale = 100;
@@ -100,8 +116,6 @@ var APP_LINKS = {
     var names = ['Hisense_installApp', 'Hisense_GetModelName', 'Hisense_GetFirmWareVersion'];
     var discovered;
     var name;
-    var row;
-    var label;
     var state;
     var j;
     var discoveryNote = '';
@@ -118,23 +132,96 @@ var APP_LINKS = {
         }
       } else { discoveryNote = ' Ricerca di ulteriori nomi non supportata.'; }
     } catch (error) { discoveryNote = ' Ricerca di ulteriori nomi non consentita.'; }
-    while (results.firstChild) { results.removeChild(results.firstChild); }
+    diagnosticRecords = [];
     for (j = 0; j < names.length; j += 1) {
+      state = inspectNative(names[j]);
+      diagnosticRecords.push({ name: names[j], state: state, available: state.indexOf('Disponibile (') === 0 });
+    }
+    diagnosticPage = 0;
+    availableOnly = false;
+    showDiagnostics();
+    summary.textContent = names.length + ' nomi controllati. Nessuna API nativa eseguita.' +
+      ' Gli ulteriori nomi Hisense/VIDAA sono rilevati sul dispositivo, senza certificazione della loro documentazione.' + discoveryNote;
+  }
+  function renderDiagnosticPage() {
+    var visible = [];
+    var j;
+    var row;
+    var label;
+    var state;
+    for (j = 0; j < diagnosticRecords.length; j += 1) {
+      if (!availableOnly || diagnosticRecords[j].available) { visible.push(diagnosticRecords[j]); }
+    }
+    pageCount = Math.max(1, Math.ceil(visible.length / pageSize));
+    diagnosticPage = Math.max(0, Math.min(diagnosticPage, pageCount - 1));
+    while (results.firstChild) { results.removeChild(results.firstChild); }
+    for (j = diagnosticPage * pageSize; j < Math.min(visible.length, (diagnosticPage + 1) * pageSize); j += 1) {
       row = document.createElement('div');
-      row.className = 'diagnostic-row';
+      row.className = 'diagnostic-row ' + (visible[j].available ? 'api-available' :
+        (visible[j].state.indexOf('Non disponibile') === 0 ? 'api-unavailable' : 'api-unknown'));
       label = document.createElement('div');
       label.className = 'diagnostic-name';
-      label.textContent = names[j];
+      label.textContent = visible[j].name;
       state = document.createElement('div');
       state.className = 'diagnostic-state';
-      state.textContent = inspectNative(names[j]);
+      state.textContent = visible[j].state;
       row.appendChild(label);
       row.appendChild(state);
       results.appendChild(row);
     }
-    results.scrollTop = 0;
-    summary.textContent = names.length + ' nomi controllati. Nessuna API nativa eseguita.' +
-      ' Gli ulteriori nomi Hisense/VIDAA sono rilevati sul dispositivo, senza certificazione della loro documentazione.' + discoveryNote;
+    if (!visible.length) {
+      row = document.createElement('p');
+      row.className = 'diagnostics-empty';
+      row.textContent = 'Nessuna API disponibile rilevata. Disattiva il filtro per vedere tutti i risultati.';
+      results.appendChild(row);
+    }
+    pageIndicator.textContent = 'Pagina ' + (diagnosticPage + 1) + ' di ' + pageCount;
+    // Keep boundary buttons focusable so remote focus never gets lost.
+    previousButton.setAttribute('aria-disabled', diagnosticPage === 0 ? 'true' : 'false');
+    nextButton.setAttribute('aria-disabled', diagnosticPage === pageCount - 1 ? 'true' : 'false');
+    filterButton.setAttribute('aria-pressed', availableOnly ? 'true' : 'false');
+    filterButton.textContent = 'Solo API disponibili: ' + (availableOnly ? 'Sì' : 'No') +
+      ' (' + visible.length + ' di ' + diagnosticRecords.length + ')';
+  }
+  function changeDiagnosticPage(step) {
+    diagnosticPage += step;
+    renderDiagnosticPage();
+  }
+  function showDiagnostics() {
+    diagnosticOpen = true;
+    settingsView.style.display = 'none';
+    settingsView.setAttribute('aria-hidden', 'true');
+    diagnosticsView.style.display = 'block';
+    diagnosticsView.setAttribute('aria-hidden', 'false');
+    settingsTitle.textContent = 'Diagnostica VIDAA';
+    renderDiagnosticPage();
+    diagnosticSelected = 0;
+    filterButton.focus();
+  }
+  function returnToSettings() {
+    diagnosticOpen = false;
+    diagnosticsView.style.display = 'none';
+    diagnosticsView.setAttribute('aria-hidden', 'true');
+    settingsView.style.display = 'block';
+    settingsView.setAttribute('aria-hidden', 'false');
+    settingsTitle.textContent = 'Impostazioni';
+    panelSelected = 0;
+    diagnosticsRun.focus();
+  }
+  filterButton.addEventListener('click', function () {
+    availableOnly = !availableOnly;
+    diagnosticPage = 0;
+    renderDiagnosticPage();
+  }, false);
+  previousButton.addEventListener('click', function () { changeDiagnosticPage(-1); }, false);
+  nextButton.addEventListener('click', function () { changeDiagnosticPage(1); }, false);
+  backButton.addEventListener('click', returnToSettings, false);
+  function bindDiagnosticFocus(button, index) {
+    button.addEventListener('focus', function () { diagnosticSelected = index; }, false);
+  }
+  var diagnosticIndex;
+  for (diagnosticIndex = 0; diagnosticIndex < diagnosticButtons.length; diagnosticIndex += 1) {
+    bindDiagnosticFocus(diagnosticButtons[diagnosticIndex], diagnosticIndex);
   }
   settingsOpen.addEventListener('click', openSettings, false);
   settingsClose.addEventListener('click', closeSettings, false);
@@ -187,6 +274,22 @@ var APP_LINKS = {
     var code = event.keyCode || event.which;
     var key = event.key;
     var isOK = key === 'Enter' || key === 'OK' || code === 13;
+    if (panelOpen && diagnosticOpen) {
+      if (key === 'Escape' || key === 'Backspace' || key === 'GoBack' || code === 27 || code === 8 || code === 461 || code === 10009) {
+        event.preventDefault(); returnToSettings();
+      } else if (key === 'ArrowLeft' || key === 'ArrowRight' || code === 37 || code === 39) {
+        event.preventDefault(); changeDiagnosticPage((key === 'ArrowLeft' || code === 37) ? -1 : 1);
+      } else if (code === 9 || key === 'Tab' || key === 'ArrowUp' || key === 'ArrowDown' || code === 38 || code === 40) {
+        event.preventDefault();
+        var diagnosticDirection = (key === 'ArrowUp' || code === 38 || ((key === 'Tab' || code === 9) && event.shiftKey)) ? -1 : 1;
+        diagnosticSelected = (diagnosticSelected + diagnosticDirection + diagnosticButtons.length) % diagnosticButtons.length;
+        diagnosticButtons[diagnosticSelected].focus();
+      } else if (isOK) {
+        event.preventDefault();
+        if (!event.repeat) { diagnosticButtons[diagnosticSelected].click(); }
+      }
+      return;
+    }
     if (panelOpen) {
       if (key === 'Escape' || key === 'Backspace' || key === 'GoBack' || code === 27 || code === 8 || code === 461 || code === 10009) {
         event.preventDefault(); closeSettings();
@@ -199,7 +302,7 @@ var APP_LINKS = {
         event.preventDefault();
         var step = (key === 'ArrowLeft' || code === 37) ? -1 : 1;
         if (panelButtons[panelSelected] === scaleControl) { setScale(displayScale + step, true); }
-        else { results.scrollTop += step * results.clientHeight * 0.5; }
+
       } else if (isOK) {
         event.preventDefault();
         if (!event.repeat) { panelButtons[panelSelected].click(); }
